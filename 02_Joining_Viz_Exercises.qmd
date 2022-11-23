@@ -39,9 +39,16 @@ Join together the election results and urban/suburban/rural tables above, and th
 -   group/summarize to calculate the mean pct of Trump 2020 vote by urban/rural categories
 
 ```{r}
+merged_data <- inner_join(counties_elexresults, counties_rural_urban_suburban, by = "geoid")
 
+merged_data_va <- merged_data %>% 
+  filter(state_code == "VA")
 
-
+merged_data_va_avg_pct_r <- merged_data_va %>%
+  group_by(rural_urban) %>% 
+  summarise(avg_pct_r = mean(pct_r_2020))
+  
+merged_data_va_avg_pct_r
 
 ```
 
@@ -49,8 +56,10 @@ Take the grouped dataset, and create a column chart using ggplot to display it
 
 ```{r}
 
-
-
+ggplot(merged_data_va_avg_pct_r, aes(x = reorder(rural_urban, avg_pct_r), y = avg_pct_r)) + 
+  geom_col() + 
+  scale_y_continuous(name = "Avg pct of Trump 2020 Vote", labels = scales::comma) +
+  scale_x_discrete(name = "Urban/Rural Category") 
 
 ```
 
@@ -60,7 +69,16 @@ Now using the joined dataset, come up with two groupings you find interesting or
 
 ```{r}
 
+merged_data <- inner_join(counties_elexresults, counties_rural_urban_suburban, by = "geoid")
 
+merged_data_il <- merged_data %>% 
+  filter(state_code == "IL")
+
+merged_data_il_margin_2020 <- merged_data_il %>%
+  group_by(rural_urban) %>% 
+  summarise(avg_margin_2020 = mean(margin_2020))
+  
+merged_data_il_margin_2020
 
 
 ```
@@ -68,8 +86,9 @@ Now using the joined dataset, come up with two groupings you find interesting or
 
 ```{r}
 
-
-
-
+ggplot(merged_data_il_margin_2020, aes(x = reorder(rural_urban, avg_margin_2020), y = avg_margin_2020)) + 
+  geom_col() + 
+  scale_y_continuous(name = "Avg Margin in 2020", labels = scales::comma) +
+  scale_x_discrete(name = "Urban/Rural Category") 
 
 ```
